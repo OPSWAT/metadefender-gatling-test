@@ -13,6 +13,7 @@ class Config {
   var pollingIntervals = 500
   var localPath = ""
   var apikey = ""
+  var waitBeforePolling = 1000
 }
 
 object Config {
@@ -27,6 +28,7 @@ object Config {
     v.localPath = ini.get("general", "LocalPath", classOf[String])
     v.pollingIntervals = ini.get("general", "PollingIntervals", classOf[Int])
     v.apikey = ini.get("general", "ApiKey", classOf[String])
+    v.waitBeforePolling = ini.get("general", "WaitBeforePolling", classOf[Int])
     v
   }
 }

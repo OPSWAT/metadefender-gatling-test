@@ -64,6 +64,7 @@ class ScanSimulation extends Simulation {
   val pipeline: ScenarioBuilder = scenario("scan-pipeline")
     .feed(localFiles.feeder)
     .exec(Scan.submitFile)
+    .pause(config.waitBeforePolling.milliseconds)
     .exec(ScanProgress.action)
     //.exec(GetSanitized.action)
 
