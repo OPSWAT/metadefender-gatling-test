@@ -20,7 +20,7 @@ UsersPerSec: the number of clients per second
 RampupDuration: time to launch all clients (s)
 LocalPath: Dataset folder path
 PollingIntervals: sleep time between each polling scan result (ms)
-ApiKey: Opswat MetaDefender apikey
+ApiKey: Opswat MetaDefender Cloud apikey
 ```
 
 To run the jar (in 'target' folder):
