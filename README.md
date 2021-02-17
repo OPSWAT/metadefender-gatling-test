@@ -26,7 +26,3 @@ ApiKey: Opswat MetaDefender apikey
 To run the jar (in 'target' folder):
 
 	java -cp metadefender-gatling-1.0.0-SNAPSHOT.jar io.gatling.app.Gatling -s ScanSimulation
-
-
-
-
