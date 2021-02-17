@@ -12,6 +12,7 @@ class Config {
   var rampupDuration = 5
   var pollingIntervals = 500
   var localPath = ""
+  var apikey = ""
 }
 
 object Config {
@@ -25,6 +26,7 @@ object Config {
     v.rampupDuration = ini.get("general", "RampupDuration", classOf[Int])
     v.localPath = ini.get("general", "LocalPath", classOf[String])
     v.pollingIntervals = ini.get("general", "PollingIntervals", classOf[Int])
+    v.apikey = ini.get("general", "ApiKey", classOf[String])
     v
   }
 }
