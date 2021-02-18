@@ -9,10 +9,6 @@ To build the jar, make sure you have Maven:
 
 	mvn clean install
 
-To run the jar (in 'target' folder):
-
-	java -cp metadefender-gatling-1.0.0-SNAPSHOT.jar io.gatling.app.Gatling -s ScanSimulation
-
 Configuration file: [config.ini](src/main/resources/config.ini)
 
 ```
@@ -24,6 +20,10 @@ UsersPerSec: the number of clients per second
 RampupDuration: time to launch all clients (s)
 LocalPath: Dataset folder path
 PollingIntervals: sleep time between each polling scan result (ms)
+ApiKey: Opswat MetaDefender Cloud apikey
+WaitBeforePolling: waiting time between push file and start to polling (ms)
 ```
 
+To run the jar (in 'target' folder):
 
+	java -cp metadefender-gatling-1.0.0-SNAPSHOT.jar io.gatling.app.Gatling -s ScanSimulation

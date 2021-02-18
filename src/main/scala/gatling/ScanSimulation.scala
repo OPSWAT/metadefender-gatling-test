@@ -18,19 +18,22 @@ class ScanSimulation extends Simulation {
     .disableCaching
 
   object Scan {
-      val submitFile = http("submit-file")
-        .post(config.baseUrl)
-        .headers(Map("filename" -> "${filename}", "rule" -> config.scanWorkflow))
-        .body(RawFileBody("${filepath}"))
-        .check(status.is(200))
-        .check(jsonPath("$..data_id").find.exists)
-        .check(jsonPath("$..data_id").find.saveAs("dataId"))
+    val submitFile = http("submit-file")
+      .post(config.baseUrl)
+      .headers(Map("filename" -> "${filename}", "rule" -> config.scanWorkflow))
+      .header("apikey", config.apikey)
+      .header("Content-Type","application/octet-stream")
+      .body(RawFileBody("${filepath}"))
+      .check(status.is(200))
+      .check(jsonPath("$..data_id").find.exists)
+      .check(jsonPath("$..data_id").find.saveAs("dataId"))
   }
 
   object ScanProgress {
     private val getScanProgress =
       http("get-scan-result")
         .get(config.baseUrl + "/${dataId}")
+        .header("apikey", config.apikey)
         .check(status.is(200))
         .check(jsonPath("$..process_info.progress_percentage").find.saveAs("progress"))
         .check(jsonPath("$..process_info.post_processing.actions_ran").optional.saveAs("sanitization"))
@@ -61,6 +64,7 @@ class ScanSimulation extends Simulation {
   val pipeline: ScenarioBuilder = scenario("scan-pipeline")
     .feed(localFiles.feeder)
     .exec(Scan.submitFile)
+    .pause(config.waitBeforePolling.milliseconds)
     .exec(ScanProgress.action)
     //.exec(GetSanitized.action)
 
