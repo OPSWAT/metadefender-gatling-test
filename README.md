@@ -20,7 +20,7 @@ UsersPerSec: the number of clients per second
 RampupDuration: time to launch all clients (s)
 LocalPath: Dataset folder path
 PollingIntervals: sleep time between each polling scan result (ms)
-ApiKey: Opswat MetaDefender Cloud apikey
+ApiKey: OPSWAT MetaDefender Cloud apikey
 WaitBeforePolling: waiting time between push file and start to polling (ms)
 ```
 
