@@ -9,7 +9,9 @@ To build the jar, make sure you have Maven:
 
 	mvn clean install
 
-Configuration file: [config.ini](src/main/resources/config.ini)
+The install step will copy `src/main/resources/config.ini` to `target/config.ini`.
+
+You can modify the settings in this configuration file: `target/config.ini`
 
 ```
 [general]
