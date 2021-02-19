@@ -24,6 +24,6 @@ ApiKey: OPSWAT MetaDefender Cloud apikey
 WaitBeforePolling: waiting time between push file and start to polling (ms)
 ```
 
-To run the jar (in 'target' folder):
+To run the jar (in the `target` folder where the `.jar` file is generated):
 
 	java -cp metadefender-gatling-1.0.0-SNAPSHOT.jar io.gatling.app.Gatling -s ScanSimulation
