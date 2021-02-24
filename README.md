@@ -16,10 +16,9 @@ You can modify the settings in this configuration file: `target/config.ini`
 ```
 [general]
 BaseUrl: MetaDefender REST URL (e.g.: http://localhost:8008/file)
-ScanWorkflow: MetaDefender workflow name
+ConstantUsers: the number of constant concurrent users
 TestDuration: time to run the test (s)
-UsersPerSec: the number of clients per second
-RampupDuration: time to launch all clients (s)
+ScanWorkflow: MetaDefender workflow name
 LocalPath: Dataset folder path
 PollingIntervals: sleep time between each polling scan result (ms)
 ApiKey: OPSWAT MetaDefender Cloud apikey
