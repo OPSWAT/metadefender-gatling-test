@@ -34,6 +34,7 @@ class ScanSimulation extends Simulation {
       http("get-scan-result")
         .get(config.baseUrl + "/${dataId}")
         .header("apikey", config.apikey)
+        .silent
         .check(status.is(200))
         .check(jsonPath("$..process_info.progress_percentage").find.saveAs("progress"))
         .check(jsonPath("$..process_info.post_processing.actions_ran").optional.saveAs("sanitization"))
