@@ -4,6 +4,8 @@ import io.gatling.core.body.RawFileBody
 import io.gatling.core.structure.{ChainBuilder, ScenarioBuilder}
 import io.gatling.http.Predef._
 import io.gatling.http.protocol.HttpProtocolBuilder
+import io.gatling.http.request.builder.HttpRequestBuilder
+
 import scala.concurrent.duration._
 
 
@@ -34,10 +36,10 @@ class ScanSimulation extends Simulation {
       http("get-scan-result")
         .get(config.baseUrl + "/${dataId}")
         .header("apikey", config.apikey)
-        .silent
         .check(status.is(200))
         .check(jsonPath("$..process_info.progress_percentage").find.saveAs("progress"))
         .check(jsonPath("$..process_info.post_processing.actions_ran").optional.saveAs("sanitization"))
+
 
     val action: ChainBuilder =
       exec(_.set("progress", "0"))
@@ -49,7 +51,7 @@ class ScanSimulation extends Simulation {
   }
 
   <!-- uncomment to if you want to check sanitization result -->
-  <!--
+
   object GetSanitized {
     private val getSanitizedFile =
       http("get-sanitized-file")
@@ -60,14 +62,16 @@ class ScanSimulation extends Simulation {
       exec(getSanitizedFile)
     }
   }
-  -->
+
 
   val pipeline: ScenarioBuilder = scenario("scan-pipeline")
     .feed(localFiles.feeder)
     .exec(Scan.submitFile)
     .pause(config.waitBeforePolling.milliseconds)
-    .exec(ScanProgress.action)
-    //.exec(GetSanitized.action)
+    .doIf(config.scan){
+      exec(ScanProgress.action)
+    }
+    .doIf(config.sanitization){GetSanitized.action}
 
   setUp(
     pipeline

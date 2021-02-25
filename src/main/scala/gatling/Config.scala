@@ -14,6 +14,9 @@ class Config {
   var localPath = ""
   var apikey = ""
   var waitBeforePolling = 1000
+  var silentScan = true
+  var scan = true
+  var sanitization = true
 }
 
 object Config {
@@ -29,6 +32,9 @@ object Config {
     v.pollingIntervals = ini.get("general", "PollingIntervals", classOf[Int])
     v.apikey = ini.get("general", "ApiKey", classOf[String])
     v.waitBeforePolling = ini.get("general", "WaitBeforePolling", classOf[Int])
+    v.silentScan = ini.get("general", "SilentScan", classOf[Boolean])
+    v.scan = ini.get("general", "Scan", classOf[Boolean])
+    v.sanitization = ini.get("general", "Sanitization", classOf[Boolean])
     v
   }
 }
