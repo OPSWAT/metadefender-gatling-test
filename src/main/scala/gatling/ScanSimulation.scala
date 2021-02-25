@@ -71,7 +71,7 @@ class ScanSimulation extends Simulation {
 
   setUp(
     pipeline
-      .inject(constantConcurrentUsers(config.userPerSec).during(config.testDuration))
+      .inject(constantConcurrentUsers(config.constantUser).during(config.testDuration))
       .protocols(httpProtocol)
   )
 }
