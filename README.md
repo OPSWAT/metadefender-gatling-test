@@ -38,15 +38,15 @@ selected file for scanning, wait for the scan result, then select a new file for
 
 ***TestDuration***
 
-Time to run the test. (seconds)
+Total test duration while the simulated users will continue to submit files. (seconds)
 
 ***ScanWorkflow***
 
-MetaDefender workflow rule to activate. Multiple values can be sent separated by "," to combine multiple workflows. It can be ```multiscan```, ```sanitize``` or```unarchive```. More details: [File scanning API](https://onlinehelp.opswat.com/mdcloud/2.1_Scanning_a_file_by_file_upload.html) -> *Request* -> *rule*
+MetaDefender workflow rule to activate. Multiple values can be sent separated by "," to combine multiple workflows. It can be `multiscan`, `sanitize` or `unarchive`. More details: [File scanning API](https://onlinehelp.opswat.com/mdcloud/2.1_Scanning_a_file_by_file_upload.html) -> *Request* -> *rule*
 
 ***LocalPath***
 
-The folder path where the files to be tested are located. Eg.: */home/user1/tester*
+The folder path where the files to be tested are located, e.g.: */home/user1/tester*
 
 ***PollingIntervals***
 
@@ -54,7 +54,7 @@ Sleep time between polling scan results. (milliseconds)
 
 ***ApiKey***
 
-OPSWAT MetaDefender Cloud apikey. It can be found at [metadefender.opswat.com](https://metadefender.opswat.com/account) -> *API key information and limits* -> *API key*. (Registration required.)
+OPSWAT MetaDefender Cloud API key. You can find your key at [metadefender.opswat.com](https://metadefender.opswat.com/account) -> *API key information and limits* -> *API key*. (Registration required.)
 
 ***WaitBeforePolling***
 
