@@ -14,44 +14,51 @@ The install step will copy `src/main/resources/config.ini` to `target/config.ini
 
 You can modify the settings in this configuration file: `target/config.ini`
 
-Example:
+Example configuration:
 ```
 [general]
 BaseUrl: https://api.metadefender.com/v4/file
 ConstantUsers: 5
 TestDuration: 10
 ScanWorkflow: multiscan
-LocalPath: home/opswatuser/testfiles
+LocalPath: /home/user/testfiles
 PollingIntervals: 500
 ApiKey: 1234567890abcdefghijklmnopqrstuv
 WaitBeforePolling: 1000
 ```
 
+***BaseURL***
 
-***BaseURL:***
-MetaDefender REST URL (e.g.: https://api.metadefender.com/v4/file). Actual endpoint information for file scanning: [File scanning API](https://onlinehelp.opswat.com/mdcloud/2.1_Scanning_a_file_by_file_upload.html)
+MetaDefender REST URL (e.g.: https://api.metadefender.com/v4/file). More information about file scanning: [File scanning API](https://onlinehelp.opswat.com/mdcloud/2.1_Scanning_a_file_by_file_upload.html)
 
-***ConstantUsers:***
-The number of constant concurrent users. The script injects users at a constant -this number- rate, defined in users per second.
+***ConstantUsers***
 
-***TestDuration:***
-Time to run the test. (s)
+The number of constant concurrent users for the test. Each simulated user will submit a randomly 
+selected file for scanning, wait for the scan result, then select a new file for scanning.
 
-***ScanWorkflow:***
-MetaDefender workflow rule to activate. Multiple values can be sent separated by "," to combine multiple workflows in one. It can be ```multiscan```, ```sanitize``` or```unarchive```. More details: [File scanning API](https://onlinehelp.opswat.com/mdcloud/2.1_Scanning_a_file_by_file_upload.html) -> *Request* -> *rule*
+***TestDuration***
 
-***LocalPath:***
+Time to run the test. (seconds)
+
+***ScanWorkflow***
+
+MetaDefender workflow rule to activate. Multiple values can be sent separated by "," to combine multiple workflows. It can be ```multiscan```, ```sanitize``` or```unarchive```. More details: [File scanning API](https://onlinehelp.opswat.com/mdcloud/2.1_Scanning_a_file_by_file_upload.html) -> *Request* -> *rule*
+
+***LocalPath***
+
 The folder path where the files to be tested are located. Eg.: */home/user1/tester*
 
-***PollingIntervals:***
-Sleep time between each polling scan result. (ms)
+***PollingIntervals***
 
-***ApiKey:***
+Sleep time between polling scan results. (milliseconds)
+
+***ApiKey***
+
 OPSWAT MetaDefender Cloud apikey. It can be found at [metadefender.opswat.com](https://metadefender.opswat.com/account) -> *API key information and limits* -> *API key*. (Registration required.)
 
+***WaitBeforePolling***
 
-***WaitBeforePolling:***
-Waiting time between push file and start to polling. (ms)
+Waiting time after file submission to start polling. (milliseconds)
 
 <br>
 
