@@ -19,7 +19,7 @@ class ScanSimulation extends Simulation {
     .acceptHeader("*/*")
     .disableCaching
 
-  object Scan {
+  object FileUpload {
     val submitFile = http("submit-file")
       .post(config.baseUrl)
       .headers(Map("filename" -> "${filename}", "rule" -> config.scanWorkflow))
@@ -29,49 +29,72 @@ class ScanSimulation extends Simulation {
       .check(status.is(200))
       .check(jsonPath("$..data_id").find.exists)
       .check(jsonPath("$..data_id").find.saveAs("dataId"))
+
   }
 
   object ScanProgress {
+
     private val getScanProgress =
       http("get-scan-result")
         .get(config.baseUrl + "/${dataId}")
         .header("apikey", config.apikey)
         .check(status.is(200))
-        .check(jsonPath("$..process_info.progress_percentage").find.saveAs("progress"))
-        .check(jsonPath("$..process_info.post_processing.actions_ran").optional.saveAs("sanitization"))
+        .check(jsonPath("$..scan_results.progress_percentage").optional.saveAs("progress"))
+        .check(jsonPath("$..sanitized.result").optional.saveAs("sanitization"))
+        .check( jsonPath( "$" ).saveAs( "RESPONSE_DATA" ) )
 
 
-    val action: ChainBuilder =
-      exec(_.set("progress", "0"))
+    val actionSum: ChainBuilder =
+      exec(_.set("sanitization", "Processing").set("progress", "0"))
         .doIf(session => session("dataId").asOption[String].isDefined) {
-          asLongAs(session => session("progress").as[String] != "100") {
-            pause(config.pollingIntervals.millis).exec(getScanProgress)
+          if (config.scan && config.sanitization){
+            println("Scan and Sanitization")
+            asLongAs(session => session("progress").as[String] != "100" ||
+              session("sanitization").as[String] == "Processing") {
+              pause(config.pollingIntervals.millis)
+              .exec(getScanProgress)}
+          }
+          else if(config.scan){
+            println("Scan")
+            asLongAs(session => session("progress").as[String] != "100") {
+              pause(config.pollingIntervals.millis).exec(getScanProgress)}
+          }
+          else {
+            println("Sanitization")
+            asLongAs(session => session("sanitization").as[String] == "Processing") {
+              pause(config.pollingIntervals.millis)
+              .exec(getScanProgress)
+                .exec( session => {
+                  println( "Some Restful Service:" )
+                  println( session( "RESPONSE_DATA" ).as[String] )
+                  session
+                })
+            }
           }
         }
+
   }
 
   <!-- uncomment to if you want to check sanitization result -->
 
-  object GetSanitized {
-    private val getSanitizedFile =
-      http("get-sanitized-file")
-        .get(config.baseUrl + "/converted/${dataId}")
-        .check(status.is(200))
-
-    val action: ChainBuilder = doIf(session => session("sanitization").asOption[String].contains("Sanitized")) {
-      exec(getSanitizedFile)
-    }
-  }
+//  object GetSanitized {
+//    private val getSanitizedFile =
+//      http("get-sanitized-file")
+//        .get(config.baseUrl + "/converted/${dataId}")
+//        .header("apikey", config.apikey)
+//        .check(status.is(200))
+//
+//    val action: ChainBuilder = doIf(session => session("sanitization").asOption[String].contains("Sanitized")) {
+//      exec(getSanitizedFile)
+//    }
+//  }
 
 
   val pipeline: ScenarioBuilder = scenario("scan-pipeline")
     .feed(localFiles.feeder)
-    .exec(Scan.submitFile)
+    .exec(FileUpload.submitFile)
     .pause(config.waitBeforePolling.milliseconds)
-    .doIf(config.scan){
-      exec(ScanProgress.action)
-    }
-    .doIf(config.sanitization){GetSanitized.action}
+    .exec(ScanProgress.actionSum)
 
   setUp(
     pipeline
