@@ -5,7 +5,6 @@ import io.gatling.core.structure.{ChainBuilder, ScenarioBuilder}
 import io.gatling.http.Predef._
 import io.gatling.http.protocol.HttpProtocolBuilder
 import io.gatling.http.request.builder.HttpRequestBuilder
-
 import scala.concurrent.duration._
 
 
@@ -29,11 +28,9 @@ class ScanSimulation extends Simulation {
       .check(status.is(200))
       .check(jsonPath("$..data_id").find.exists)
       .check(jsonPath("$..data_id").find.saveAs("dataId"))
-
   }
 
   object ScanProgress {
-
     def initScanProgress () : HttpRequestBuilder = {
       var base = http("get-scan-result")
         .get(config.baseUrl + "/${dataId}")
@@ -42,53 +39,45 @@ class ScanSimulation extends Simulation {
       if(config.silentScan){
         base = base.silent
       }
-      return base
+      base
         .check(jsonPath("$..scan_results.progress_percentage").optional.saveAs("progress"))
         .check(jsonPath("$..sanitized.result").optional.saveAs("sanitization"))
         .check( jsonPath( "$" ).saveAs( "RESPONSE_DATA" ) )
     }
 
+    def printResponse(): ChainBuilder = {
+      exec( session => {
+        println("Response:")
+        println(session( "RESPONSE_DATA").as[String])
+        session
+      })
+    }
+
     private val getScanProgress = initScanProgress()
 
-
-    val actionSum: ChainBuilder =
+    val action: ChainBuilder =
       exec(_.set("sanitization", "Processing").set("progress", "0"))
         .doIf(session => session("dataId").asOption[String].isDefined) {
           if (config.scan && config.sanitization){
-            println("Scan and Sanitization")
             asLongAs(session => session("progress").as[String] != "100" ||
               session("sanitization").as[String] == "Processing") {
               pause(config.pollingIntervals.millis)
               .exec(getScanProgress)
-              .exec( session => {
-                println( "Respond: S+S:" )
-                println( session( "RESPONSE_DATA" ).as[String] )
-                session
-              })
+              .doIf(config.developerMode){printResponse()}
             }
           }
           else if(config.scan){
-            println("Scan")
             asLongAs(session => session("progress").as[String] != "100") {
               pause(config.pollingIntervals.millis)
               .exec(getScanProgress)
-              .exec( session => {
-                println( "Response Scan:" )
-                println( session( "RESPONSE_DATA" ).as[String] )
-                session
-              })
+              .doIf(config.developerMode){printResponse()}
             }
           }
           else {
-            println("Sanitization")
             asLongAs(session => session("sanitization").as[String] == "Processing") {
               pause(config.pollingIntervals.millis)
               .exec(getScanProgress)
-              .exec( session => {
-                println( "Response Sanit:" )
-                println( session( "RESPONSE_DATA" ).as[String] )
-                session
-              })
+              .doIf(config.developerMode){printResponse()}
             }
           }
         }
@@ -99,7 +88,7 @@ class ScanSimulation extends Simulation {
     .feed(localFiles.feeder)
     .exec(FileUpload.submitFile)
     .pause(config.waitBeforePolling.milliseconds)
-    .exec(ScanProgress.actionSum)
+    .exec(ScanProgress.action)
 
   setUp(
     pipeline
