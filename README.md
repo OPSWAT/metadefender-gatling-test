@@ -14,7 +14,7 @@ The install step will copy `src/main/resources/config.ini` to `target/config.ini
 
 You can modify the settings in this configuration file: `target/config.ini`
 
-Example:
+Example configuration:
 ```
 [general]
 BaseUrl: https://api.metadefender.com/v4/file
@@ -32,40 +32,53 @@ Sanitization=false
 
 
 ***BaseURL:***
-MetaDefender REST URL (e.g.: https://api.metadefender.com/v4/file). Actual endpoint information for file scanning: [File scanning API](https://onlinehelp.opswat.com/mdcloud/2.1_Scanning_a_file_by_file_upload.html)
+
+MetaDefender REST URL (e.g.: https://api.metadefender.com/v4/file). More information about file scanning: [File scanning API](https://onlinehelp.opswat.com/mdcloud/2.1_Scanning_a_file_by_file_upload.html)
 
 ***ConstantUsers:***
-The number of constant concurrent users. The script injects users at a constant -this number- rate, defined in users per second.
+
+The number of constant concurrent users for the test. Each simulated user will submit a randomly 
+selected file for scanning, wait for the scan result, then select a new file for scanning.
 
 ***TestDuration:***
-Time to run the test. (s)
+
+Total test duration while the simulated users will continue to submit files. (seconds)
 
 ***ScanWorkflow:***
-MetaDefender workflow rule to activate. Multiple values can be sent separated by "," to combine multiple workflows in one. It can be ```multiscan```, ```sanitize``` or```unarchive```. More details: [File scanning API](https://onlinehelp.opswat.com/mdcloud/2.1_Scanning_a_file_by_file_upload.html) -> *Request* -> *rule*
+
+MetaDefender scanning workflow rule to activate. Multiple values can be sent separated by "," to combine multiple workflows. It can be `multiscan`, `sanitize` or `unarchive`. If *Sanitization* is true the program will automatically complete it with `sanitize`. More details: [File scanning API](https://onlinehelp.opswat.com/mdcloud/2.1_Scanning_a_file_by_file_upload.html) -> *Request* -> *rule*
 
 ***LocalPath:***
-The folder path where the files to be tested are located. Eg.: */home/user1/tester*
+
+The folder path where the files to be tested are located, e.g.: */home/user1/tester*
 
 ***PollingIntervals:***
-Sleep time between each polling scan result. (ms)
+
+Sleep time between polling scan results. (milliseconds)
 
 ***ApiKey:***
-OPSWAT MetaDefender Cloud apikey. It can be found at [metadefender.opswat.com](https://metadefender.opswat.com/account) -> *API key information and limits* -> *API key*. (Registration required.)
+
+OPSWAT MetaDefender Cloud API key. You can find your key at [metadefender.opswat.com](https://metadefender.opswat.com/account) -> *API key information and limits* -> *API key*. (Registration required.)
 
 ***WaitBeforePolling:***
-Waiting time between push file and start to polling. (ms)
+
+Waiting time after file submission to start polling. (milliseconds)
 
 ***SilentScan:***
+
 A silent request is issued but not logged nor reported. If SilentScan is true the get-scan-result method (polling part) still executed but not logged or reported the errors. (true/false)
 
 ***Scan:***
+
 Enable or disable the file scanning method. If it is enable, the program asks the result (by polling) until the scan process is not 100% (true/false)
 
 ***Sanitization:***
+
 Enable or disable the file sanitization method. If it is enable, the program asks the result (by polling) until the sanitization process is not 100% (true/false)
 
 
 *****DeveloperMode:***
+
 It can be set a DeveloperMode, which print the HTTP-responses to the terminal. By default, it is hidden and false. (true/false) 
 
 
