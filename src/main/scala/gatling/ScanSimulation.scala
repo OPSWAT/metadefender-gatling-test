@@ -19,27 +19,45 @@ class ScanSimulation extends Simulation {
     .disableCaching
 
   object FileUpload {
-    val submitFile = http("submit-file")
-      .post(config.baseUrl)
-      .headers(Map("filename" -> "${filename}", "rule" -> config.scanWorkflow))
-      .header("apikey", config.apikey)
-      .header("Content-Type","application/octet-stream")
-      .body(RawFileBody("${filepath}"))
-      .check(status.is(200))
-      .check(jsonPath("$..data_id").find.exists)
-      .check(jsonPath("$..data_id").find.saveAs("dataId"))
+    def initFileUpload () : HttpRequestBuilder = {
+      var base = http("submit-file")
+        .post(config.baseUrl)
+        .header("filename","${filename}")
+
+      if(config.scanWorkflow != ""){
+        base = base.header("rule", config.scanWorkflow)
+      }
+
+      if(config.apikey != ""){
+        base = base.header("apikey", config.apikey)
+      }
+
+      base
+        .header("Content-Type","application/octet-stream")
+        .body(RawFileBody("${filepath}"))
+        .check(status.is(200))
+        .check(jsonPath("$..data_id").find.exists)
+        .check(jsonPath("$..data_id").find.saveAs("dataId"))
+    }
+
+    val submitFile = initFileUpload()
   }
 
   object ScanProgress {
     def initScanProgress () : HttpRequestBuilder = {
       var base = http("get-scan-result")
         .get(config.baseUrl + "/${dataId}")
-        .header("apikey", config.apikey)
-        .check(status.is(200))
+
+      if(config.apikey != ""){
+        base = base.header("apikey", config.apikey)
+      }
+
       if(config.silentScan){
         base = base.silent
       }
+
       base
+        .check(status.is(200))
         .check(jsonPath("$..scan_results.progress_percentage").optional.saveAs("progress"))
         .check(jsonPath("$..sanitized.result").optional.saveAs("sanitization"))
         .check( jsonPath( "$" ).saveAs( "RESPONSE_DATA" ) )
@@ -47,7 +65,6 @@ class ScanSimulation extends Simulation {
 
     def printResponse(): ChainBuilder = {
       exec( session => {
-        println("Response:")
         println(session( "RESPONSE_DATA").as[String])
         session
       })
@@ -58,26 +75,25 @@ class ScanSimulation extends Simulation {
     val action: ChainBuilder =
       exec(_.set("sanitization", "Processing").set("progress", "0"))
         .doIf(session => session("dataId").asOption[String].isDefined) {
-          if (config.scan && config.sanitization){
+          if (config.checkSanitization){
             asLongAs(session => session("progress").as[String] != "100" ||
               session("sanitization").as[String] == "Processing") {
               pause(config.pollingIntervals.millis)
               .exec(getScanProgress)
-              .doIf(config.developerMode){printResponse()}
-            }
-          }
-          else if(config.scan){
-            asLongAs(session => session("progress").as[String] != "100") {
-              pause(config.pollingIntervals.millis)
-              .exec(getScanProgress)
-              .doIf(config.developerMode){printResponse()}
+              .doIf(config.developerMode){
+                println("Scan and sanitization response:")
+                printResponse()
+              }
             }
           }
           else {
-            asLongAs(session => session("sanitization").as[String] == "Processing") {
+            asLongAs(session => session("progress").as[String] != "100") {
               pause(config.pollingIntervals.millis)
               .exec(getScanProgress)
-              .doIf(config.developerMode){printResponse()}
+              .doIf(config.developerMode){
+                println("Scan response:")
+                printResponse()
+              }
             }
           }
         }

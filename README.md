@@ -17,14 +17,14 @@ You can modify the settings in this configuration file: `target/config.ini`
 Example configuration:
 ```
 [general]
-BaseUrl: https://api.metadefender.com/v4/file
-ConstantUsers: 5
-TestDuration: 10
-ScanWorkflow: multiscan
-LocalPath: home/opswatuser/testfiles
-PollingIntervals: 500
-ApiKey: 1234567890abcdefghijklmnopqrstuv
-WaitBeforePolling: 1000
+BaseUrl=https://api.metadefender.com/v4/file
+ConstantUsers=5
+TestDuration=10
+ScanWorkflow=multiscan
+LocalPath=/home/opswatuser/testfiles
+PollingIntervals=500
+ApiKey=1234567890abcdefghijklmnopqrstuv
+WaitBeforePolling=1000
 SilentScan=true
 Scan=true
 Sanitization=false
