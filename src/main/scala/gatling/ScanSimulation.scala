@@ -63,8 +63,9 @@ class ScanSimulation extends Simulation {
         .check( jsonPath( "$" ).saveAs( "RESPONSE_DATA" ) )
     }
 
-    def printResponse(): ChainBuilder = {
+    def printResponse ( scanTypeAsString:String ): ChainBuilder = {
       exec( session => {
+        println(scanTypeAsString)
         println(session( "RESPONSE_DATA").as[String])
         session
       })
@@ -81,8 +82,7 @@ class ScanSimulation extends Simulation {
               pause(config.pollingIntervals.millis)
               .exec(getScanProgress)
               .doIf(config.developerMode){
-                println("Scan and sanitization response:")
-                printResponse()
+                printResponse("Check scan and sanitization process:")
               }
             }
           }
@@ -91,8 +91,7 @@ class ScanSimulation extends Simulation {
               pause(config.pollingIntervals.millis)
               .exec(getScanProgress)
               .doIf(config.developerMode){
-                println("Scan response:")
-                printResponse()
+                printResponse("Check scan process:")
               }
             }
           }
