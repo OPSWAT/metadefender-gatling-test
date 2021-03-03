@@ -58,15 +58,14 @@ class ScanSimulation extends Simulation {
 
       base
         .check(status.is(200))
-        .check(jsonPath("$..scan_results.progress_percentage").optional.saveAs("progress"))
-        .check(jsonPath("$..sanitized.result").optional.saveAs("sanitization"))
-        .check( jsonPath( "$" ).saveAs( "RESPONSE_DATA" ) )
+        .check(jsonPath("$..process_info.progress_percentage").optional.saveAs("progress"))
+        .check( jsonPath( "$" ).saveAs( "response_data" ) )
     }
 
-    def printResponse ( scanTypeAsString:String ): ChainBuilder = {
+    def printResponse (): ChainBuilder = {
       exec( session => {
-        println(scanTypeAsString)
-        println(session( "RESPONSE_DATA").as[String])
+        println("Response:")
+        println(session( "response_data").as[String])
         session
       })
     }
@@ -74,30 +73,17 @@ class ScanSimulation extends Simulation {
     private val getScanProgress = initScanProgress()
 
     val action: ChainBuilder =
-      exec(_.set("sanitization", "Processing").set("progress", "0"))
-        .doIf(session => session("dataId").asOption[String].isDefined) {
-          if (config.checkSanitization){
-            asLongAs(session => session("progress").as[String] != "100" ||
-              session("sanitization").as[String] == "Processing") {
-              pause(config.pollingIntervals.millis)
-              .exec(getScanProgress)
-              .doIf(config.developerMode){
-                printResponse("Check scan and sanitization process:")
-              }
+      exec(_.set("progress", "0"))
+      .doIf(session => session("dataId").asOption[String].isDefined) {
+          asLongAs(session => session("progress").as[String] != "100") {
+            pause(config.pollingIntervals.millis)
+            .exec(getScanProgress)
+            .doIf(config.developerMode){
+              printResponse()
             }
           }
-          else {
-            asLongAs(session => session("progress").as[String] != "100") {
-              pause(config.pollingIntervals.millis)
-              .exec(getScanProgress)
-              .doIf(config.developerMode){
-                printResponse("Check scan process:")
-              }
-            }
-          }
-        }
+      }
   }
-
 
   val pipeline: ScenarioBuilder = scenario("scan-pipeline")
     .feed(localFiles.feeder)

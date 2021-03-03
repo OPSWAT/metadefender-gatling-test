@@ -39,7 +39,6 @@ PollingIntervals=500
 ApiKey=1234567890abcdefghijklmnopqrstuv
 WaitBeforePolling=1000
 SilentScan=true
-CheckSanitizationResult=true
 ```
 
 
@@ -58,7 +57,7 @@ Total test duration while the simulated users will continue to submit files. (se
 
 ***ScanWorkflow [optional]:***
 
-MetaDefender scanning workflow rule to activate. Multiple values can be sent separated by "," to combine multiple workflows. For cloud-based testing, it can be `multiscan`, `sanitize` or `unarchive`. If `CheckSanitizationResult` is true, and the testing process is cloud-based,  it needs to be set. More details to cloud usage: [File scanning API](https://onlinehelp.opswat.com/mdcloud/2.1_Scanning_a_file_by_file_upload.html) -> *Request* -> *rule*
+MetaDefender scanning workflow rule to activate. Multiple values can be sent separated by "," to combine multiple workflows. For cloud-based testing, it can be `multiscan`, `sanitize` or `unarchive`. More details to cloud usage: [File scanning API](https://onlinehelp.opswat.com/mdcloud/2.1_Scanning_a_file_by_file_upload.html) -> *Request* -> *rule*
 
 ***LocalPath:***
 
@@ -80,14 +79,10 @@ Waiting time after file submission to start polling. (milliseconds)
 
 A silent request is issued but not logged nor reported. If SilentScan is true the get-scan-result method (polling part) still executed but not logged or reported the errors. (true/false)
 
-***CheckSanitizationResult:***
-
-If it is true, the program asks for the result (by polling) until the sanitization process is not 100%. For cloud-based usage, it needs to be set in `ScanWorkflow` also.  (true/false)
-
 
 *****DeveloperMode:***
 
-It can be set a DeveloperMode, which print the HTTP-responses to the terminal. It is also print (before the response) what will be check: Scan result or scan results with polling result. By default, it is hidden and false. (true/false)
+It can be set a DeveloperMode, which print the HTTP-responses to the terminal. By default, it is hidden and false. (true/false)
 
 
 

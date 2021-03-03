@@ -1,7 +1,7 @@
 
-import java.io.File
-
+import java.io.{File, IOException}
 import org.ini4j.Wini
+import java.nio.file.{Files, Paths}
 
 
 class Config {
@@ -14,7 +14,6 @@ class Config {
   var apikey = ""
   var waitBeforePolling = 1000
   var silentScan = true
-  var checkSanitization = false
   var developerMode = false
 }
 
@@ -29,11 +28,18 @@ object Config {
     v.testDuration = ini.get("general", "TestDuration", classOf[Int])
     v.scanWorkflow = ini.get("general", "ScanWorkflow", classOf[String])
     v.localPath = ini.get("general", "LocalPath", classOf[String])
+
+    try{
+      assert(Files.list(Paths.get(v.localPath)).count()>0)
+    }
+    catch {
+      case _:Throwable => throw new IOException("WRONG PATH OR EMPTY DIRECTORY: "+v.localPath)
+    }
+
     v.pollingIntervals = ini.get("general", "PollingIntervals", classOf[Int])
     v.apikey = ini.get("general", "ApiKey", classOf[String])
     v.waitBeforePolling = ini.get("general", "WaitBeforePolling", classOf[Int])
     v.silentScan = ini.get("general", "SilentScan", classOf[Boolean])
-    v.checkSanitization = ini.get("general", "CheckSanitizationResult", classOf[Boolean])
     v.developerMode = ini.get("general", "DeveloperMode", classOf[Boolean])
     v
   }
