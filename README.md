@@ -1,10 +1,17 @@
-Using Gatling to perform MetaDefender performance test
+# MetaDefender Gatling performance test
 
-Documentation
+Useful links:
 
 * [MetaDefender Core developer guide](https://onlinehelp.opswat.com/corev4/9._%28NEW%29_MetaDefender_Core_Developer_Guide.html)
 * [File scanning and sanitization API (cloud)](https://onlinehelp.opswat.com/mdcloud/2.1_Scanning_a_file_by_file_upload.html)
 * [Gatling](https://gatling.io/)
+
+## Requirements
+
+- installed Java 11
+
+## Usage
+### Build
 
 To build the jar, make sure you have Maven:
 
@@ -12,22 +19,12 @@ To build the jar, make sure you have Maven:
 
 The install step will copy `src/main/resources/config.ini` to `target/config.ini`.
 
+### Configuration
+
 You can modify the settings in this configuration file: `target/config.ini`
 
-Example configuration for **local** usage:
-```
-[general]
-BaseUrl=http://localhost:8008/file
-ConstantUsers=5
-TestDuration=10
-LocalPath=/home/opswatuser/testfiles
-PollingIntervals=500
-WaitBeforePolling=1000
-SilentScan=true
-```
 
-
-Example configuration for **cloud** usage:
+Example configuration for **Metadefender Cloud** usage:
 ```
 [general]
 BaseUrl=https://api.metadefender.com/v4/file
@@ -38,9 +35,19 @@ LocalPath=/home/opswatuser/testfiles
 PollingIntervals=500
 ApiKey=1234567890abcdefghijklmnopqrstuv
 WaitBeforePolling=1000
-SilentScan=true
 ```
 
+
+Example configuration for **local MetaDefender Core** usage:
+```
+[general]
+BaseUrl=http://localhost:8008/file
+ConstantUsers=5
+TestDuration=10
+LocalPath=/home/opswatuser/testfiles
+PollingIntervals=500
+WaitBeforePolling=1000
+```
 
 ***BaseURL:***
 
@@ -85,10 +92,9 @@ A silent request is issued but not logged nor reported. If SilentScan is true th
 It can be set a DeveloperMode, which print the HTTP-responses to the terminal. By default, it is hidden and false. (true/false)
 
 
+### Run a test
 
-<br>
-
-To run the jar (in the `target` folder where the `.jar` file is generated):
+`metadefender-gatling-2.0.0-SNAPSHOT.jar` file and `config.ini` file are required to run the test. In case of building `metadefender-gatling-2.0.0-SNAPSHOT.jar` is generated in `target` folder. Command to run:
 
 	java -cp metadefender-gatling-2.0.0-SNAPSHOT.jar io.gatling.app.Gatling -s ScanSimulation
 
