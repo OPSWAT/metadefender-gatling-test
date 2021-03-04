@@ -10,8 +10,7 @@ Useful links:
 
 - installed Java 11
 
-## Usage
-### Build
+## Build
 
 To build the jar, make sure you have Maven:
 
@@ -19,7 +18,7 @@ To build the jar, make sure you have Maven:
 
 The install step will copy `src/main/resources/config.ini` to `target/config.ini`.
 
-### Configuration
+## Configuration
 
 You can modify the settings in this configuration file: `target/config.ini`
 
@@ -82,17 +81,16 @@ OPSWAT MetaDefender Cloud API key. You can find your key at [metadefender.opswat
 
 Waiting time after file submission to start polling. (milliseconds)
 
-***SilentScan:***
+*****ShowPollingDetails:***
 
-A silent request is issued but not logged nor reported. If SilentScan is true the get-scan-result method (polling part) still executed but not logged or reported the errors. (true/false)
-
+If ShowPollingDetails is true the software shows and logs the polling details. By default it is false. (true/false)
 
 *****DeveloperMode:***
 
 It can be set a DeveloperMode, which print the HTTP-responses to the terminal. By default, it is hidden and false. (true/false)
 
 
-### Run a test
+## Run a test
 
 `metadefender-gatling-2.0.0-SNAPSHOT.jar` file and `config.ini` file are required to run the test. In case of building `metadefender-gatling-2.0.0-SNAPSHOT.jar` is generated in `target` folder. Command to run:
 

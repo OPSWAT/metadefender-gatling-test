@@ -52,20 +52,22 @@ class ScanSimulation extends Simulation {
         base = base.header("apikey", config.apikey)
       }
 
-      if(config.silentScan){
+      if(!config.pollingDetails){
         base = base.silent
       }
 
       base
         .check(status.is(200))
         .check(jsonPath("$..process_info.progress_percentage").optional.saveAs("progress"))
-        .check( jsonPath( "$" ).saveAs( "response_data" ) )
+        .check( jsonPath( "$" ).optional.saveAs( "response_data" ) )
     }
 
     def printResponse (): ChainBuilder = {
       exec( session => {
-        println("Response:")
-        println(session( "response_data").as[String])
+        if(session.contains("response_data")) {
+          println("Response:")
+          println(session( "response_data").as[String])
+        }
         session
       })
     }
