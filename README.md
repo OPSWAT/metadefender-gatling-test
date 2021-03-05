@@ -71,6 +71,8 @@ For testing local MetaDefender Core, you are free to specify any custom workflow
 
 The folder path where the files to be tested are located, e.g.: */home/user1/tester*
 
+This path must point to a valid folder that contains at least one file!
+
 ***PollingIntervals:***
 
 Sleep time between polling scan results. (milliseconds)
