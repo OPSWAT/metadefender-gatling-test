@@ -92,7 +92,13 @@ It can be set a DeveloperMode, which print the HTTP-responses to the terminal. B
 
 ## Run a test
 
-`metadefender-gatling-2.0.0-SNAPSHOT.jar` file and `config.ini` file are required to run the test. In case of building `metadefender-gatling-2.0.0-SNAPSHOT.jar` is generated in `target` folder. Command to run:
+`metadefender-gatling-2.0.0-SNAPSHOT.jar` file and `config.ini` file are required to run the test. In case of building `metadefender-gatling-2.0.0-SNAPSHOT.jar` is generated in `target` folder. 
 
-	java -cp metadefender-gatling-2.0.0-SNAPSHOT.jar io.gatling.app.Gatling -s ScanSimulation
+Run 
+
+`./start.sh`
+
+to testing.
+
+<!--java -cp metadefender-gatling-2.0.0-SNAPSHOT.jar io.gatling.app.Gatling -s ScanSimulation -->
 
