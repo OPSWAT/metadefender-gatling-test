@@ -4,6 +4,7 @@ import io.gatling.core.body.RawFileBody
 import io.gatling.core.structure.{ChainBuilder, ScenarioBuilder}
 import io.gatling.http.Predef._
 import io.gatling.http.protocol.HttpProtocolBuilder
+import io.gatling.http.request.builder.HttpRequestBuilder
 import scala.concurrent.duration._
 
 
@@ -17,57 +18,80 @@ class ScanSimulation extends Simulation {
     .acceptHeader("*/*")
     .disableCaching
 
-  object Scan {
-    val submitFile = http("submit-file")
-      .post(config.baseUrl)
-      .headers(Map("filename" -> "${filename}", "rule" -> config.scanWorkflow))
-      .header("apikey", config.apikey)
-      .header("Content-Type","application/octet-stream")
-      .body(RawFileBody("${filepath}"))
-      .check(status.is(200))
-      .check(jsonPath("$..data_id").find.exists)
-      .check(jsonPath("$..data_id").find.saveAs("dataId"))
+  object FileUpload {
+    def initFileUpload () : HttpRequestBuilder = {
+      var base = http("submit-file")
+        .post(config.baseUrl)
+        .header("filename","${filename}")
+
+      if(config.scanWorkflow != ""){
+        base = base.header("rule", config.scanWorkflow)
+      }
+
+      if(config.apikey != ""){
+        base = base.header("apikey", config.apikey)
+      }
+
+      base
+        .header("Content-Type","application/octet-stream")
+        .body(RawFileBody("${filepath}"))
+        .check(status.is(200))
+        .check(jsonPath("$..data_id").find.exists)
+        .check(jsonPath("$..data_id").find.saveAs("dataId"))
+    }
+
+    val submitFile = initFileUpload()
   }
 
   object ScanProgress {
-    private val getScanProgress =
-      http("get-scan-result")
+    def initScanProgress () : HttpRequestBuilder = {
+      var base = http("get-scan-result")
         .get(config.baseUrl + "/${dataId}")
-        .header("apikey", config.apikey)
-        .silent
+
+      if(config.apikey != ""){
+        base = base.header("apikey", config.apikey)
+      }
+
+      if(!config.pollingDetails){
+        base = base.silent
+      }
+
+      base
         .check(status.is(200))
-        .check(jsonPath("$..process_info.progress_percentage").find.saveAs("progress"))
-        .check(jsonPath("$..process_info.post_processing.actions_ran").optional.saveAs("sanitization"))
+        .check(jsonPath("$..process_info.progress_percentage").optional.saveAs("progress"))
+        .check( jsonPath( "$" ).optional.saveAs( "response_data" ) )
+    }
+
+    def printResponse (): ChainBuilder = {
+      exec( session => {
+        if(session.contains("response_data")) {
+          println("Response:")
+          println(session( "response_data").as[String])
+        }
+        session
+      })
+    }
+
+    private val getScanProgress = initScanProgress()
 
     val action: ChainBuilder =
       exec(_.set("progress", "0"))
-        .doIf(session => session("dataId").asOption[String].isDefined) {
+      .doIf(session => session("dataId").asOption[String].isDefined) {
           asLongAs(session => session("progress").as[String] != "100") {
-            pause(config.pollingIntervals.millis).exec(getScanProgress)
+            pause(config.pollingIntervals.millis)
+            .exec(getScanProgress)
+            .doIf(config.developerMode){
+              printResponse()
+            }
           }
-        }
+      }
   }
-
-  <!-- uncomment to if you want to check sanitization result -->
-  <!--
-  object GetSanitized {
-    private val getSanitizedFile =
-      http("get-sanitized-file")
-        .get(config.baseUrl + "/converted/${dataId}")
-        .check(status.is(200))
-
-    val action: ChainBuilder = doIf(session => session("sanitization").asOption[String].contains("Sanitized")) {
-      exec(getSanitizedFile)
-    }
-  }
-  -->
 
   val pipeline: ScenarioBuilder = scenario("scan-pipeline")
     .feed(localFiles.feeder)
-    .exec(Scan.submitFile)
+    .exec(FileUpload.submitFile)
     .pause(config.waitBeforePolling.milliseconds)
     .exec(ScanProgress.action)
-    //.exec(GetSanitized.action)
 
   setUp(
     pipeline
