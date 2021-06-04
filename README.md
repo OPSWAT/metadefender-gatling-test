@@ -53,10 +53,9 @@ ScanNumberUpperBound=13
 MetaDefender REST URL, e.g.: https://api.metadefender.com/v4/file (Cloud) or http://localhost:8008/file (local). 
 More information about file scanning: [File scanning API](https://onlinehelp.opswat.com/mdcloud/2.1_Scanning_a_file_by_file_upload.html)
 
-***ConstantUsers:***
+***UsersPerSec:***
 
-The number of users injecting every second for the test. Each simulated user will submit a randomly 
-selected file for scanning, wait for the scan result, then select a new file for scanning.
+The number of users injected every second for the test. Each simulated user will submit a randomly selected file for scanning and wait for the scan result. It is equal to scan request per second.
 
 ***InjectDuration:***
 
