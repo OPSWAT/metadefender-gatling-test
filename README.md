@@ -28,12 +28,13 @@ Example configuration for **Metadefender Cloud** usage:
 [general]
 BaseUrl=https://api.metadefender.com/v4/file
 ConstantUsers=5
-TestDuration=10
+InjectDuration=30
+MaxDuration=60
 ScanWorkflow=multiscan,sanitize
 LocalPath=/home/opswatuser/testfiles
 PollingIntervals=500
 ApiKey=1234567890abcdefghijklmnopqrstuv
-WaitBeforePolling=1000
+ScanNumberUpperBound=13
 ```
 
 Example configuration for **local MetaDefender Core** usage:
@@ -41,10 +42,10 @@ Example configuration for **local MetaDefender Core** usage:
 [general]
 BaseUrl=http://localhost:8008/file
 ConstantUsers=5
-TestDuration=10
+InjectDuration=30
 LocalPath=/home/opswatuser/testfiles
 PollingIntervals=500
-WaitBeforePolling=1000
+ScanNumberUpperBound=13
 ```
 
 ***BaseURL:***
@@ -54,12 +55,16 @@ More information about file scanning: [File scanning API](https://onlinehelp.ops
 
 ***ConstantUsers:***
 
-The number of constant concurrent users for the test. Each simulated user will submit a randomly 
+The number of users injecting every second for the test. Each simulated user will submit a randomly 
 selected file for scanning, wait for the scan result, then select a new file for scanning.
 
-***TestDuration:***
+***InjectDuration:***
 
-Total test duration while the simulated users will continue to submit files. (seconds)
+Injects users into the test during this duration. (seconds)
+
+***MaxDuration:***
+
+The maximum duration of the test. It is a hard limit with a default value *InjectDuration* × 10. (seconds)
 
 ***ScanWorkflow [optional]:***
 
@@ -80,10 +85,6 @@ Sleep time between polling scan results. (milliseconds)
 ***ApiKey [Cloud usage only]:***
 
 OPSWAT MetaDefender Cloud API key. You can find your key at [metadefender.opswat.com](https://metadefender.opswat.com/account) -> *API key information and limits* -> *API key*. (Registration required.)
-
-***WaitBeforePolling:***
-
-Waiting time after file submission to start polling. (milliseconds)
 
 *****ShowPollingDetails:***
 
