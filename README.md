@@ -28,12 +28,13 @@ Example configuration for **Metadefender Cloud** usage:
 [general]
 BaseUrl=https://api.metadefender.com/v4/file
 ConstantUsers=5
-TestDuration=10
+InjectDuration=30
+MaxDuration=60
 ScanWorkflow=multiscan,sanitize
 LocalPath=/home/opswatuser/testfiles
 PollingIntervals=500
 ApiKey=1234567890abcdefghijklmnopqrstuv
-WaitBeforePolling=1000
+ScanRequestsUpperBound=100
 ```
 
 Example configuration for **local MetaDefender Core** usage:
@@ -41,10 +42,10 @@ Example configuration for **local MetaDefender Core** usage:
 [general]
 BaseUrl=http://localhost:8008/file
 ConstantUsers=5
-TestDuration=10
+InjectDuration=30
 LocalPath=/home/opswatuser/testfiles
 PollingIntervals=500
-WaitBeforePolling=1000
+ScanRequestsUpperBound=100
 ```
 
 ***BaseURL:***
@@ -52,14 +53,17 @@ WaitBeforePolling=1000
 MetaDefender REST URL, e.g.: https://api.metadefender.com/v4/file (Cloud) or http://localhost:8008/file (local). 
 More information about file scanning: [File scanning API](https://onlinehelp.opswat.com/mdcloud/2.1_Scanning_a_file_by_file_upload.html)
 
-***ConstantUsers:***
+***UsersPerSec:***
 
-The number of constant concurrent users for the test. Each simulated user will submit a randomly 
-selected file for scanning, wait for the scan result, then select a new file for scanning.
+The number of users injected every second during the test (i.e. the number of scan requests per second). Each simulated user will submit a randomly selected file for scanning and wait for the scan result.
 
-***TestDuration:***
+***InjectDuration:***
 
-Total test duration while the simulated users will continue to submit files. (seconds)
+Injects users into the test during this duration. (seconds)
+
+***MaxDuration:***
+
+The maximum duration of the test. It is a hard limit with a default value *InjectDuration* × 10. (seconds)
 
 ***ScanWorkflow [optional]:***
 
@@ -81,9 +85,9 @@ Sleep time between polling scan results. (milliseconds)
 
 OPSWAT MetaDefender Cloud API key. You can find your key at [metadefender.opswat.com](https://metadefender.opswat.com/account) -> *API key information and limits* -> *API key*. (Registration required.)
 
-***WaitBeforePolling:***
+***ScanRequestsUpperBound [optional]:***
 
-Waiting time after file submission to start polling. (milliseconds)
+Gatling will stop submitting new scan requests when this upper bound is reached. If this bound is zero or not given, the script will upload files for scanning as long as the _InjectDuration_ lasts or the running time does not reach the _MaxDuration_.
 
 *****ShowPollingDetails:***
 
@@ -96,7 +100,7 @@ It true, Gatling will print the HTTP responses to the console. By default, it is
 
 ## Running a test
 
-The `metadefender-gatling-2.0.0-SNAPSHOT.jar` and `config.ini` files are required to run the test. 
+The `metadefender-gatling-3.0.0-SNAPSHOT.jar` and `config.ini` files are required to run the test. 
 Maven will install these files in the `target` folder. 
 
 Run a test using the helper script:
@@ -105,5 +109,5 @@ Run a test using the helper script:
 
 The script runs the jar file with the following parameters:
 
-	java -cp metadefender-gatling-2.0.0-SNAPSHOT.jar io.gatling.app.Gatling -s ScanSimulation
+	java -cp metadefender-gatling-3.0.0-SNAPSHOT.jar io.gatling.app.Gatling -s ScanSimulation
 
