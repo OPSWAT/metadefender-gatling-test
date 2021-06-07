@@ -87,7 +87,7 @@ OPSWAT MetaDefender Cloud API key. You can find your key at [metadefender.opswat
 
 ***ScanRequestsUpperBound [optional]:***
 
-Upper bound for scan requests. If the scan requests reached the limit the software does not send a new scan request. If this bound is zero or not given, the script upload files for a scan as long as the _InjectDuration_ lasts or running time does not reach the _Maxduration_.
+Gatling will stop submitting new scan requests when this upper bound is reached. If this bound is zero or not given, the script will upload files for scanning as long as the _InjectDuration_ lasts or the running time does not reach the _MaxDuration_.
 
 *****ShowPollingDetails:***
 
@@ -100,7 +100,7 @@ It true, Gatling will print the HTTP responses to the console. By default, it is
 
 ## Running a test
 
-The `metadefender-gatling-2.0.0-SNAPSHOT.jar` and `config.ini` files are required to run the test. 
+The `metadefender-gatling-3.0.0-SNAPSHOT.jar` and `config.ini` files are required to run the test. 
 Maven will install these files in the `target` folder. 
 
 Run a test using the helper script:
@@ -109,5 +109,5 @@ Run a test using the helper script:
 
 The script runs the jar file with the following parameters:
 
-	java -cp metadefender-gatling-2.0.0-SNAPSHOT.jar io.gatling.app.Gatling -s ScanSimulation
+	java -cp metadefender-gatling-3.0.0-SNAPSHOT.jar io.gatling.app.Gatling -s ScanSimulation
 
