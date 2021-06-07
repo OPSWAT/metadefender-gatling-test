@@ -90,7 +90,7 @@ class ScanSimulation extends Simulation {
   }
 
   val pipeline: ScenarioBuilder = scenario("scan-pipeline")
-    .doIf(_ => (config.scanNumberUpper == 0 || fileUploadCounter.getAndIncrement() < config.scanNumberUpper)) {
+    .doIf(_ => (config.scanRequestsUpper == 0 || fileUploadCounter.getAndIncrement() < config.scanRequestsUpper)) {
       feed(localFiles.feeder)
         .exec(FileUpload.submitFile)
         .exec(ScanProgress.action)

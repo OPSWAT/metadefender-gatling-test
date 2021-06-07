@@ -15,7 +15,7 @@ class Config {
   var apikey = ""
   var pollingDetails = false
   var developerMode = false
-  var scanNumberUpper = 0
+  var scanRequestsUpper = 0
 }
 
 object Config {
@@ -66,7 +66,7 @@ object Config {
     v.apikey = ini.get("general", "ApiKey", classOf[String])
     v.pollingDetails = ini.get("general", "ShowPollingDetails", classOf[Boolean])
     v.developerMode = ini.get("general", "DeveloperMode", classOf[Boolean])
-    v.scanNumberUpper = ini.get("general", "ScanNumberUpperBound", classOf[Int])
+    v.scanRequestsUpper = ini.get("general", "ScanRequestsUpperBound", classOf[Int])
     checkValues(v)
 
     v

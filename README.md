@@ -34,7 +34,7 @@ ScanWorkflow=multiscan,sanitize
 LocalPath=/home/opswatuser/testfiles
 PollingIntervals=500
 ApiKey=1234567890abcdefghijklmnopqrstuv
-ScanNumberUpperBound=13
+ScanRequestsUpperBound=100
 ```
 
 Example configuration for **local MetaDefender Core** usage:
@@ -45,7 +45,7 @@ ConstantUsers=5
 InjectDuration=30
 LocalPath=/home/opswatuser/testfiles
 PollingIntervals=500
-ScanNumberUpperBound=13
+ScanRequestsUpperBound=100
 ```
 
 ***BaseURL:***
@@ -55,7 +55,7 @@ More information about file scanning: [File scanning API](https://onlinehelp.ops
 
 ***UsersPerSec:***
 
-The number of users injected every second for the test. Each simulated user will submit a randomly selected file for scanning and wait for the scan result. It is equal to scan request per second.
+The number of users injected every second during the test (i.e. the number of scan requests per second). Each simulated user will submit a randomly selected file for scanning and wait for the scan result.
 
 ***InjectDuration:***
 
@@ -84,6 +84,10 @@ Sleep time between polling scan results. (milliseconds)
 ***ApiKey [Cloud usage only]:***
 
 OPSWAT MetaDefender Cloud API key. You can find your key at [metadefender.opswat.com](https://metadefender.opswat.com/account) -> *API key information and limits* -> *API key*. (Registration required.)
+
+***ScanRequestsUpperBound [optional]:***
+
+Upper bound for scan requests. If the scan requests reached the limit the software does not send a new scan request. If this bound is zero or not given, the script upload files for a scan as long as the _InjectDuration_ lasts or running time does not reach the _Maxduration_.
 
 *****ShowPollingDetails:***
 
